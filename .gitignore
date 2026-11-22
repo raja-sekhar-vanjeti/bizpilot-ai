@@ -28,3 +28,6 @@ Thumbs.db
 # Generated scaffold artifacts
 backend/bizpilot-backend.zip
 backend/spring-metadata.json
+
+# Locally generated demo-account credentials
+scripts/.demo-credentials.txt

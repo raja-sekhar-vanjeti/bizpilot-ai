@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bizpilot.audit.service.AuditService;
 import com.bizpilot.auth.entity.User;
 import com.bizpilot.auth.repository.UserRepository;
 import com.bizpilot.common.exception.NotFoundException;
@@ -32,6 +33,9 @@ class CustomerServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private AuditService auditService;
+
     private CustomerService customerService;
 
     private UUID ownerId;
@@ -40,7 +44,7 @@ class CustomerServiceTest {
 
     @BeforeEach
     void setUp() {
-        customerService = new CustomerService(customerRepository, userRepository);
+        customerService = new CustomerService(customerRepository, userRepository, auditService);
         ownerId = UUID.randomUUID();
         otherOwnerId = UUID.randomUUID();
         customerId = UUID.randomUUID();

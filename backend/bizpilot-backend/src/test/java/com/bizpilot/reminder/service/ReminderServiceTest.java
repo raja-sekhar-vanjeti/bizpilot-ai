@@ -11,6 +11,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bizpilot.audit.service.AuditService;
 import com.bizpilot.auth.entity.User;
 import com.bizpilot.auth.repository.UserRepository;
 import com.bizpilot.common.exception.BadRequestException;
@@ -55,6 +56,8 @@ class ReminderServiceTest {
     private InvoiceRepository invoiceRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private AuditService auditService;
 
     private ReminderService service;
     private UUID ownerId;
@@ -64,7 +67,7 @@ class ReminderServiceTest {
     @BeforeEach
     void setUp() {
         Clock clock = Clock.fixed(TODAY.atStartOfDay().toInstant(ZoneOffset.UTC), ZoneOffset.UTC);
-        service = new ReminderService(reminderRepository, invoiceRepository, userRepository, clock);
+        service = new ReminderService(reminderRepository, invoiceRepository, userRepository, clock, auditService);
         ownerId = UUID.randomUUID();
         owner = TestData.user(ownerId);
         customer = TestData.customer(owner, "Acme Traders");
@@ -218,7 +221,8 @@ class ReminderServiceTest {
     void serviceHasNoMessagingDependencies() {
         Constructor<?>[] constructors = ReminderService.class.getConstructors();
         assertEquals(1, constructors.length);
-        assertEquals(List.of(ReminderRepository.class, InvoiceRepository.class, UserRepository.class, Clock.class),
+        assertEquals(List.of(ReminderRepository.class, InvoiceRepository.class, UserRepository.class, Clock.class,
+                        AuditService.class),
                 Arrays.asList(constructors[0].getParameterTypes()));
     }
 }

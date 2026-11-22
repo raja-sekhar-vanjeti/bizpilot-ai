@@ -75,17 +75,17 @@ import { PageHeader, StateBlock, StatusBadge } from '../../shared/ui';
       border-color: rgba(255, 255, 255, 0.45);
     }
     .insight.sev-critical {
-      --tone: #b8604f;
+      --tone: #be185d;
       background: var(--tint-rose);
       box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
     }
     .insight.sev-warning {
-      --tone: #c9965a;
+      --tone: #ec4899;
       background: var(--tint-amber);
       box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
     }
     .insight.sev-info {
-      --tone: #3f6b57;
+      --tone: #7c3aed;
       background: var(--tint-indigo);
       box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
     }

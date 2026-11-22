@@ -9,6 +9,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bizpilot.audit.service.AuditService;
 import com.bizpilot.auth.entity.User;
 import com.bizpilot.auth.repository.UserRepository;
 import com.bizpilot.common.exception.ConflictException;
@@ -43,6 +44,9 @@ class InvoiceServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private AuditService auditService;
+
     private InvoiceService invoiceService;
 
     private UUID ownerId;
@@ -52,7 +56,7 @@ class InvoiceServiceTest {
 
     @BeforeEach
     void setUp() {
-        invoiceService = new InvoiceService(invoiceRepository, customerRepository, userRepository);
+        invoiceService = new InvoiceService(invoiceRepository, customerRepository, userRepository, auditService);
         ownerId = UUID.randomUUID();
         otherOwnerId = UUID.randomUUID();
         invoiceId = UUID.randomUUID();

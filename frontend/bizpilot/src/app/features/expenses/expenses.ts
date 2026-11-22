@@ -58,7 +58,7 @@ import { Modal, PageHeader, Pagination, StateBlock } from '../../shared/ui';
                 <tr>
                   <td>{{ e.expenseDate | date: 'mediumDate' }}</td>
                   <td><strong>{{ e.description }}</strong>@if (e.notes) {<br /><span class="muted small">{{ e.notes }}</span>}</td>
-                  <td><span class="chip" style="background:var(--tint-rose);color:#be123c">{{ e.category | label }}</span></td>
+                  <td><span class="chip" style="background:var(--tint-rose);color:#be185d">{{ e.category | label }}</span></td>
                   <td>{{ e.vendor || '—' }}</td>
                   <td>{{ e.paymentMethod | label }}</td>
                   <td class="num text-bad">{{ e.amount | money }}</td>

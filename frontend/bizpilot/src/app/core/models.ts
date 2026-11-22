@@ -321,3 +321,18 @@ export interface Insight {
 // ---- Email (reminders)
 export interface EmailPreview { to: string; subject: string; htmlBody: string; }
 export interface EmailDelivery { deliveryId: string; reminderId: string; recipientEmail: string; subject: string; status: 'PENDING' | 'SENT' | 'FAILED'; sentAt: string | null; failureReason: string | null; }
+
+// ---- Audit log (read-only; GET /api/audit-logs)
+export type AuditAction = 'CREATE' | 'UPDATE' | 'DELETE' | 'PAYMENT' | 'SEND';
+export type AuditEntityType = 'CUSTOMER' | 'INVOICE' | 'PAYMENT' | 'EXPENSE' | 'REMINDER';
+export interface AuditLogEntry {
+  id: string;
+  action: AuditAction;
+  entityType: AuditEntityType;
+  entityId: string;
+  summary: string;
+  createdAt: string;
+}
+/** Paged audit log, unwrapped from ApiResponse<SpringPage<AuditLogEntry>> the same way as other lists. */
+export type AuditLogPage = PageResult<AuditLogEntry>;
+

@@ -193,8 +193,8 @@ export class WhatIfPage implements OnInit {
   });
 
   protected readonly compareSeries = [
-    { name: 'Now', color: '#2f5a48' },
-    { name: 'With delay', color: '#d97706' },
+    { name: 'Now', color: '#7c3aed' },
+    { name: 'With delay', color: '#ec4899' },
   ];
   protected readonly compareGroups = computed<ChartGroup[]>(() => {
     const r = this.result();

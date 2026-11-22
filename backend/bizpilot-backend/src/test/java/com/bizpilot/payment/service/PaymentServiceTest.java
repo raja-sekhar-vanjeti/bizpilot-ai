@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bizpilot.audit.service.AuditService;
 import com.bizpilot.common.exception.ConflictException;
 import com.bizpilot.common.exception.NotFoundException;
 import com.bizpilot.invoice.entity.Invoice;
@@ -34,6 +35,9 @@ class PaymentServiceTest {
     @Mock
     private InvoiceRepository invoiceRepository;
 
+    @Mock
+    private AuditService auditService;
+
     private PaymentService paymentService;
 
     private UUID ownerId;
@@ -41,7 +45,7 @@ class PaymentServiceTest {
 
     @BeforeEach
     void setUp() {
-        paymentService = new PaymentService(paymentRepository, invoiceRepository);
+        paymentService = new PaymentService(paymentRepository, invoiceRepository, auditService);
         ownerId = UUID.randomUUID();
         invoiceId = UUID.randomUUID();
     }

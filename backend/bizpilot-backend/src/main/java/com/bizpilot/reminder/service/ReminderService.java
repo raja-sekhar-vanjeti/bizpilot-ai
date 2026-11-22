@@ -1,5 +1,6 @@
 package com.bizpilot.reminder.service;
 
+import com.bizpilot.audit.service.AuditService;
 import com.bizpilot.auth.repository.UserRepository;
 import com.bizpilot.common.exception.BadRequestException;
 import com.bizpilot.common.exception.NotFoundException;
@@ -26,16 +27,19 @@ public class ReminderService {
     private final InvoiceRepository invoiceRepository;
     private final UserRepository userRepository;
     private final Clock clock;
+    private final AuditService auditService;
 
     public ReminderService(
             ReminderRepository reminderRepository,
             InvoiceRepository invoiceRepository,
             UserRepository userRepository,
-            Clock clock) {
+            Clock clock,
+            AuditService auditService) {
         this.reminderRepository = reminderRepository;
         this.invoiceRepository = invoiceRepository;
         this.userRepository = userRepository;
         this.clock = clock;
+        this.auditService = auditService;
     }
 
     @Transactional
@@ -82,7 +86,13 @@ public class ReminderService {
             created.add(reminder);
         }
 
-        return reminderRepository.saveAll(created);
+        List<Reminder> saved = reminderRepository.saveAll(created);
+        for (Reminder reminder : saved) {
+            auditService.record(ownerId, "CREATE", "REMINDER", String.valueOf(reminder.getId()),
+                    "Generated " + reminder.getReminderType() + " reminder for invoice "
+                            + reminder.getInvoice().getInvoiceNumber());
+        }
+        return saved;
     }
 
     @Transactional(readOnly = true)
@@ -113,7 +123,10 @@ public class ReminderService {
             throw new BadRequestException("Reminder status must be COMPLETED or DISMISSED");
         }
         reminder.setStatus(status);
-        return reminderRepository.save(reminder);
+        Reminder saved = reminderRepository.save(reminder);
+        auditService.record(ownerId, "UPDATE", "REMINDER", String.valueOf(saved.getId()),
+                "Reminder marked " + status);
+        return saved;
     }
 
     private String buildMessage(Invoice invoice, ReminderType type) {

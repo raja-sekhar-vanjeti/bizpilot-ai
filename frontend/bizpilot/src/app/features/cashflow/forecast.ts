@@ -159,17 +159,17 @@ import { PageHeader, StatCard, StateBlock } from '../../shared/ui';
       border-color: rgba(255, 255, 255, 0.45);
     }
     .kpi-balance ::ng-deep .stat-card {
-      --tone: #3f6b57;
+      --tone: #c026d3;
       background: var(--tint-indigo);
       box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
     }
     .kpi-in ::ng-deep .stat-card {
-      --tone: #5f8f74;
+      --tone: #7c3aed;
       background: var(--tint-emerald);
       box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
     }
     .kpi-out ::ng-deep .stat-card {
-      --tone: #b8604f;
+      --tone: #a855f7;
       background: var(--tint-rose);
       box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
     }
@@ -196,11 +196,11 @@ export class ForecastPage implements OnInit {
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
 
-  protected readonly balanceSeries = [{ name: 'Closing balance', color: '#2f5a48' }];
+  protected readonly balanceSeries = [{ name: 'Closing balance', color: '#6d28d9' }];
   protected readonly flowSeries = [
-    { name: 'Confirmed in', color: '#16a34a' },
-    { name: 'Expected in', color: '#86efac' },
-    { name: 'Outflows', color: '#dc2626' },
+    { name: 'Confirmed in', color: '#7c3aed' },
+    { name: 'Expected in', color: '#c4b5fd' },
+    { name: 'Outflows', color: '#a855f7' },
   ];
 
   protected readonly balanceGroups = computed<ChartGroup[]>(() =>

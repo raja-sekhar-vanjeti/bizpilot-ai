@@ -1,5 +1,6 @@
 package com.bizpilot.payment.service;
 
+import com.bizpilot.audit.service.AuditService;
 import com.bizpilot.common.exception.ConflictException;
 import com.bizpilot.common.exception.NotFoundException;
 import com.bizpilot.invoice.entity.Invoice;
@@ -26,10 +27,13 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final InvoiceRepository invoiceRepository;
+    private final AuditService auditService;
 
-    public PaymentService(PaymentRepository paymentRepository, InvoiceRepository invoiceRepository) {
+    public PaymentService(PaymentRepository paymentRepository, InvoiceRepository invoiceRepository,
+                          AuditService auditService) {
         this.paymentRepository = paymentRepository;
         this.invoiceRepository = invoiceRepository;
+        this.auditService = auditService;
     }
 
     @Transactional
@@ -74,6 +78,9 @@ public class PaymentService {
             invoice.setStatus(InvoiceStatus.PARTIALLY_PAID);
         }
         invoiceRepository.save(invoice);
+
+        auditService.record(ownerId, "PAYMENT", "PAYMENT", String.valueOf(saved.getId()),
+                "Payment recorded for invoice " + invoice.getInvoiceNumber());
 
         return saved;
     }

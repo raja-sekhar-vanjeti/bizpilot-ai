@@ -1,5 +1,6 @@
 package com.bizpilot.invoice.service;
 
+import com.bizpilot.audit.service.AuditService;
 import com.bizpilot.auth.entity.User;
 import com.bizpilot.auth.repository.UserRepository;
 import com.bizpilot.common.exception.ConflictException;
@@ -34,13 +35,16 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     public InvoiceService(InvoiceRepository invoiceRepository,
                           CustomerRepository customerRepository,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          AuditService auditService) {
         this.invoiceRepository = invoiceRepository;
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
+        this.auditService = auditService;
     }
 
     @Transactional
@@ -68,6 +72,8 @@ public class InvoiceService {
         calculateTotals(invoice, discountOf(req));
 
         Invoice saved = invoiceRepository.save(invoice);
+        auditService.record(ownerId, "CREATE", "INVOICE", String.valueOf(saved.getId()),
+                "Invoice " + saved.getInvoiceNumber() + " created");
         return InvoiceResponse.from(saved);
     }
 
@@ -135,6 +141,8 @@ public class InvoiceService {
         calculateTotals(invoice, discountOf(req));
 
         Invoice saved = invoiceRepository.save(invoice);
+        auditService.record(ownerId, "UPDATE", "INVOICE", String.valueOf(saved.getId()),
+                "Invoice " + saved.getInvoiceNumber() + " updated");
         return InvoiceResponse.from(saved);
     }
 
@@ -168,6 +176,8 @@ public class InvoiceService {
         invoice.setStatus(InvoiceStatus.SENT);
         invoice.setSentAt(LocalDateTime.now());
         Invoice saved = invoiceRepository.save(invoice);
+        auditService.record(ownerId, "UPDATE", "INVOICE", String.valueOf(saved.getId()),
+                "Invoice marked as sent");
         return InvoiceResponse.from(saved);
     }
 
@@ -183,6 +193,8 @@ public class InvoiceService {
         }
         invoice.setStatus(InvoiceStatus.CANCELLED);
         Invoice saved = invoiceRepository.save(invoice);
+        auditService.record(ownerId, "UPDATE", "INVOICE", String.valueOf(saved.getId()),
+                "Invoice cancelled");
         return InvoiceResponse.from(saved);
     }
 

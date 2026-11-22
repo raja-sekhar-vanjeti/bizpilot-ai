@@ -139,10 +139,10 @@ function round2(value: number): number {
     .hero-strip { background: var(--grad-primary); color: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25); }
     .btn-grad { background: var(--grad-primary); color: #fff; border: 0; }
     .btn-grad:hover:not(:disabled) { filter: brightness(1.08); }
-    .accent-indigo { border-top: 3px solid #3f6b57; }
-    .accent-violet { border-top: 3px solid #7fa08a; }
-    .accent-amber { border-top: 3px solid #c9965a; }
-    .totals-grad { background: var(--grad-success); color: #fff; border: 0; box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3); }
+    .accent-indigo { border-top: 3px solid #7c3aed; }
+    .accent-violet { border-top: 3px solid #c4b5fd; }
+    .accent-amber { border-top: 3px solid #ec4899; }
+    .totals-grad { background: var(--grad-success); color: #fff; border: 0; box-shadow: 0 6px 18px rgba(192, 38, 211, 0.3); }
     .totals-grad h2, .totals-grad .total-row, .totals-grad .total-row label { color: #fff; -webkit-text-fill-color: #fff; background: none; }
     .totals-grad .total-row.grand { border-top-color: rgba(255, 255, 255, 0.6); font-weight: 700; }
     .totals-grad .muted { color: rgba(255, 255, 255, 0.85); }

@@ -108,6 +108,7 @@ public class EmailService {
             delivery.setStatus(EmailDeliveryStatus.FAILED);
             delivery.setFailureReason("Email sender authentication failed");
         } catch (MailException ex) {
+            log.error("Email send failed to {}: {}", request.to(), ex.getMessage(), ex);
             log.warn("Email send failed: {}", ex.getClass().getSimpleName());
             delivery.setStatus(EmailDeliveryStatus.FAILED);
             delivery.setFailureReason("Mail server could not be reached. Try again later.");

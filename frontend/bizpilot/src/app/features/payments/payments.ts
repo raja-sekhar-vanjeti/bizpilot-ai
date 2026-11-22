@@ -49,7 +49,7 @@ import { RecordPayment } from './record-payment';
                     <a [routerLink]="['/invoices', p.invoiceId]">{{ invoiceById().get(p.invoiceId)?.invoiceNumber ?? 'View invoice' }}</a>
                   </td>
                   <td>{{ invoiceById().get(p.invoiceId)?.customerName ?? '—' }}</td>
-                  <td><span class="chip" style="background:var(--tint-indigo);color:#4338ca">{{ p.method | label }}</span></td>
+                  <td><span class="chip" style="background:var(--tint-indigo);color:#6d28d9">{{ p.method | label }}</span></td>
                   <td>{{ p.reference || '—' }}</td>
                   <td class="num text-good">{{ p.amount | money: (invoiceById().get(p.invoiceId)?.currency ?? 'INR') }}</td>
                 </tr>

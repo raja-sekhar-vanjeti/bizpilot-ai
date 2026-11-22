@@ -126,10 +126,10 @@ import { RecordPayment } from '../payments/record-payment';
     .hero-strip { background: var(--grad-primary); color: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25); }
     .btn-grad { background: var(--grad-primary); color: #fff; border: 0; }
     .btn-grad:hover:not(:disabled) { filter: brightness(1.08); }
-    .accent-indigo { border-top: 3px solid #3f6b57; }
-    .accent-emerald { border-top: 3px solid #5f8f74; }
+    .accent-indigo { border-top: 3px solid #7c3aed; }
+    .accent-emerald { border-top: 3px solid #a855f7; }
     thead th { background: var(--tint-indigo); }
-    .totals-grad { background: var(--grad-success); color: #fff; border-radius: 10px; padding: 12px 16px; box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3); }
+    .totals-grad { background: var(--grad-success); color: #fff; border-radius: 10px; padding: 12px 16px; box-shadow: 0 6px 18px rgba(192, 38, 211, 0.3); }
     .totals-grad .total-row { color: #fff; }
     .totals-grad .total-row.grand { border-top-color: rgba(255, 255, 255, 0.6); font-weight: 700; }
   `],

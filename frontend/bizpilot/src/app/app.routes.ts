@@ -83,6 +83,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/insights/insights').then((m) => m.InsightsPage),
       },
       {
+        path: 'audit-log',
+        title: 'Audit log · BizPilot AI',
+        loadComponent: () => import('./features/audit/audit-log').then((m) => m.AuditLogPage),
+      },
+      {
         path: 'profile',
         title: 'Profile & settings · BizPilot AI',
         loadComponent: () => import('./features/profile/profile').then((m) => m.ProfilePage),

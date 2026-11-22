@@ -1,5 +1,6 @@
 package com.bizpilot.customer.service;
 
+import com.bizpilot.audit.service.AuditService;
 import com.bizpilot.auth.entity.User;
 import com.bizpilot.auth.repository.UserRepository;
 import com.bizpilot.common.exception.NotFoundException;
@@ -18,10 +19,13 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
-    public CustomerService(CustomerRepository customerRepository, UserRepository userRepository) {
+    public CustomerService(CustomerRepository customerRepository, UserRepository userRepository,
+                           AuditService auditService) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
+        this.auditService = auditService;
     }
 
     @Transactional
@@ -34,7 +38,9 @@ public class CustomerService {
         copyFields(customer, req);
         customer.setArchived(false);
 
-        return CustomerResponse.from(customerRepository.save(customer));
+        Customer saved = customerRepository.save(customer);
+        auditService.record(ownerId, "CREATE", "CUSTOMER", String.valueOf(saved.getId()), "Customer created");
+        return CustomerResponse.from(saved);
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +60,9 @@ public class CustomerService {
     public CustomerResponse update(UUID ownerId, UUID id, CustomerRequest req) {
         Customer customer = loadActive(ownerId, id);
         copyFields(customer, req);
-        return CustomerResponse.from(customerRepository.save(customer));
+        Customer saved = customerRepository.save(customer);
+        auditService.record(ownerId, "UPDATE", "CUSTOMER", String.valueOf(saved.getId()), "Customer updated");
+        return CustomerResponse.from(saved);
     }
 
     /** Soft delete: marks the customer archived so invoice history is preserved. */
@@ -63,6 +71,7 @@ public class CustomerService {
         Customer customer = loadActive(ownerId, id);
         customer.setArchived(true);
         customerRepository.save(customer);
+        auditService.record(ownerId, "DELETE", "CUSTOMER", String.valueOf(id), "Customer archived");
     }
 
     private Customer loadActive(UUID ownerId, UUID id) {

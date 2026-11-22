@@ -1,5 +1,6 @@
 package com.bizpilot.expense.service;
 
+import com.bizpilot.audit.service.AuditService;
 import com.bizpilot.auth.entity.User;
 import com.bizpilot.auth.repository.UserRepository;
 import com.bizpilot.common.exception.ConflictException;
@@ -21,10 +22,13 @@ public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
-    public ExpenseService(ExpenseRepository expenseRepository, UserRepository userRepository) {
+    public ExpenseService(ExpenseRepository expenseRepository, UserRepository userRepository,
+                          AuditService auditService) {
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
+        this.auditService = auditService;
     }
 
     @Transactional
@@ -36,7 +40,9 @@ public class ExpenseService {
         expense.setOwner(owner);
         copyFields(expense, req);
 
-        return expenseRepository.save(expense);
+        Expense saved = expenseRepository.save(expense);
+        auditService.record(ownerId, "CREATE", "EXPENSE", String.valueOf(saved.getId()), "Expense created");
+        return saved;
     }
 
     @Transactional(readOnly = true)
@@ -68,13 +74,16 @@ public class ExpenseService {
     public Expense update(UUID ownerId, UUID id, ExpenseRequest req) {
         Expense expense = loadOwned(ownerId, id);
         copyFields(expense, req);
-        return expenseRepository.save(expense);
+        Expense saved = expenseRepository.save(expense);
+        auditService.record(ownerId, "UPDATE", "EXPENSE", String.valueOf(saved.getId()), "Expense updated");
+        return saved;
     }
 
     @Transactional
     public void delete(UUID ownerId, UUID id) {
         Expense expense = loadOwned(ownerId, id);
         expenseRepository.delete(expense);
+        auditService.record(ownerId, "DELETE", "EXPENSE", String.valueOf(id), "Expense deleted");
     }
 
     private Expense loadOwned(UUID ownerId, UUID id) {

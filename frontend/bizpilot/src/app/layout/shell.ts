@@ -277,7 +277,10 @@ export class Shell implements OnInit {
     },
     {
       title: 'Account',
-      items: [{ path: '/profile', label: 'Profile & Settings', icon: '⚙' }],
+      items: [
+        { path: '/audit-log', label: 'Audit log', icon: '≡' },
+        { path: '/profile', label: 'Profile & Settings', icon: '⚙' },
+      ],
     },
   ];
 
