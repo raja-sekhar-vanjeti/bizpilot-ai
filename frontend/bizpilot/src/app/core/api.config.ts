@@ -1,5 +1,7 @@
 /**
- * Base URL of the BizPilot Spring Boot API. The backend must list the frontend origin in
- * CORS_ALLOWED_ORIGINS (default http://localhost:4200).
+ * Base path of the BizPilot Spring Boot API. Calls are same-origin:
+ * - local dev: `ng serve` proxies /api to http://localhost:8080 (proxy.conf.json)
+ * - Vercel: vercel.json rewrites /api/* to the hosted backend
+ * so the browser never makes cross-origin requests.
  */
-export const API_BASE_URL = 'http://localhost:8080/api';
+export const API_BASE_URL = '/api';
