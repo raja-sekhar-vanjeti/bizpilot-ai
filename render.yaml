@@ -9,6 +9,10 @@ services:
     dockerContext: ./backend/bizpilot-backend
     healthCheckPath: /api/health
     autoDeploy: true
+    buildFilter:
+      paths:
+        - backend/bizpilot-backend/**
+        - render.yaml
     envVars:
       - key: DB_URL
         sync: false # e.g. jdbc:postgresql://<neon-host>/<db>?sslmode=require
