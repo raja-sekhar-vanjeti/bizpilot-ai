@@ -18,11 +18,13 @@ type Scope = 'all' | 'customer' | 'invoices';
   selector: 'app-what-if',
   imports: [ReactiveFormsModule, RouterLink, DatePipe, MoneyPipe, PageHeader, StatCard, StateBlock, BarChart],
   template: `
-    <app-page-header title="What-if simulation" subtitle="See how late customer payments would change your cash position. Nothing is saved.">
-      <a routerLink="/cashflow" class="btn btn-secondary">Back to forecast</a>
-    </app-page-header>
+    <div class="page-strip">
+      <app-page-header title="What-if simulation" subtitle="See how late customer payments would change your cash position. Nothing is saved.">
+        <a routerLink="/cashflow" class="btn btn-secondary">Back to forecast</a>
+      </app-page-header>
+    </div>
 
-    <section class="card">
+    <section class="card tone-amber">
       <form [formGroup]="form" (ngSubmit)="run()" novalidate>
         <div class="form-grid three">
           <div class="field">
@@ -77,7 +79,7 @@ type Scope = 'all' | 'customer' | 'invoices';
 
         @if (error()) { <div class="alert alert-error" role="alert">{{ error() }}</div> }
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary" [disabled]="running()">{{ running() ? 'Simulating…' : 'Run simulation' }}</button>
+          <button type="submit" class="btn btn-primary btn-gradient" [disabled]="running()">{{ running() ? 'Simulating…' : 'Run simulation' }}</button>
         </div>
       </form>
     </section>
@@ -85,7 +87,7 @@ type Scope = 'all' | 'customer' | 'invoices';
     <app-state [loading]="running()" />
 
     @if (!running() && result(); as r) {
-      <div class="grid stats-grid">
+      <div class="grid stats-grid result-box">
         <app-stat-card label="Closing balance (now)" [value]="r.baseline.projectedClosingBalance | money" />
         <app-stat-card label="Closing balance (with delay)" [value]="r.simulated.projectedClosingBalance | money"
           [tone]="r.closingBalanceImpact < 0 ? 'bad' : 'default'" [hint]="impactText(r.closingBalanceImpact)" />
@@ -102,12 +104,12 @@ type Scope = 'all' | 'customer' | 'invoices';
         <div class="alert alert-error">A {{ r.delayDays }}-day delay would push your cash balance below zero.</div>
       }
 
-      <section class="card">
+      <section class="card tone-indigo">
         <div class="card-head"><h2>Weekly closing balance: now vs with delay</h2></div>
         <app-bar-chart [groups]="compareGroups()" [series]="compareSeries" ariaLabel="Baseline versus simulated closing balance" />
       </section>
 
-      <section class="card">
+      <section class="card tone-violet">
         <div class="card-head"><h2>Affected invoices</h2></div>
         <app-state [empty]="r.affectedInvoices.length === 0" emptyText="No open invoices matched — nothing would change." />
         @if (r.affectedInvoices.length > 0) {
@@ -132,6 +134,42 @@ type Scope = 'all' | 'customer' | 'invoices';
       </section>
     }
   `,
+  styles: [`
+    .page-strip {
+      background: var(--grad-warm);
+      color: #fff;
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .page-strip ::ng-deep .page-header { margin-bottom: 0; }
+    .page-strip ::ng-deep .page-header p { color: rgba(255, 255, 255, 0.92); }
+    .page-strip ::ng-deep .page-header h1 {
+      background: none;
+      color: #fff;
+      -webkit-text-fill-color: #fff;
+      -webkit-background-clip: border-box;
+      background-clip: border-box;
+    }
+    .page-strip ::ng-deep .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+    .btn-gradient {
+      background: var(--grad-warm);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(244, 63, 94, 0.25);
+    }
+    .btn-gradient:hover:not(:disabled) { filter: brightness(1.06); }
+    .result-box {
+      background: var(--tint-amber);
+      border-radius: 14px;
+      padding: 12px;
+    }
+  `],
 })
 export class WhatIfPage implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
@@ -155,7 +193,7 @@ export class WhatIfPage implements OnInit {
   });
 
   protected readonly compareSeries = [
-    { name: 'Now', color: '#2563eb' },
+    { name: 'Now', color: '#2f5a48' },
     { name: 'With delay', color: '#d97706' },
   ];
   protected readonly compareGroups = computed<ChartGroup[]>(() => {

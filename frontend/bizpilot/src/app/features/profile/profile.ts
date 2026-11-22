@@ -19,7 +19,7 @@ import { PageHeader, StateBlock } from '../../shared/ui';
 
     @if (!loading() && auth.profile(); as p) {
       <div class="grid two-col">
-        <section class="card">
+        <section class="card tone-violet">
           <div class="profile-head">
             <span class="avatar avatar-lg">{{ initials(p.fullName) }}</span>
             <div>
@@ -38,7 +38,7 @@ import { PageHeader, StateBlock } from '../../shared/ui';
           </p>
         </section>
 
-        <section class="card">
+        <section class="card tone-indigo">
           <h2>Session &amp; security</h2>
           <dl class="detail-list">
             <dt>Signed in as</dt><dd>{{ p.email }}</dd>
@@ -49,7 +49,7 @@ import { PageHeader, StateBlock } from '../../shared/ui';
           <button type="button" class="btn btn-danger" (click)="auth.logout()">Sign out</button>
         </section>
 
-        <section class="card">
+        <section class="card tone-emerald">
           <h2>Application</h2>
           <dl class="detail-list">
             <dt>API server</dt><dd><code>{{ apiUrl }}</code></dd>
@@ -61,6 +61,26 @@ import { PageHeader, StateBlock } from '../../shared/ui';
       </div>
     }
   `,
+  styles: [`
+    .profile-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: -4px -4px 18px;
+      padding: 18px 20px;
+      border-radius: 14px;
+      background: var(--grad-violet);
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(139, 92, 246, 0.3);
+    }
+    .profile-head h2 { color: #fff; margin: 0; }
+    .profile-head .muted { color: rgba(255, 255, 255, 0.85); }
+    .profile-head .avatar {
+      background: #fff;
+      color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+    }
+  `],
 })
 export class ProfilePage implements OnInit {
   protected readonly auth = inject(AuthService);

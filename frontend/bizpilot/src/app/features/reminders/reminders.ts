@@ -15,8 +15,9 @@ import { PageHeader, StateBlock, StatusBadge } from '../../shared/ui';
   selector: 'app-reminders',
   imports: [RouterLink, DatePipe, PageHeader, StateBlock, StatusBadge],
   template: `
+    <div aria-hidden="true" style="height:4px;border-radius:4px;background:var(--grad-violet);margin-bottom:14px"></div>
     <app-page-header title="Reminders" subtitle="Draft payment reminders for overdue and upcoming invoices.">
-      <button type="button" class="btn btn-primary" [disabled]="generating()" (click)="generate()">
+      <button type="button" class="btn btn-primary" style="background:var(--grad-violet);border-color:transparent;color:#fff" [disabled]="generating()" (click)="generate()">
         {{ generating() ? 'Generating…' : 'Generate reminders' }}
       </button>
     </app-page-header>
@@ -36,8 +37,8 @@ import { PageHeader, StateBlock, StatusBadge } from '../../shared/ui';
 
     @if (status() === 'OPEN' && !loading() && reminders().length > 0) {
       <div class="chip-row">
-        <span class="chip chip-bad">{{ overdueCount() }} overdue</span>
-        <span class="chip chip-warn">{{ reminders().length - overdueCount() }} upcoming</span>
+        <span class="chip chip-bad" style="background:var(--tint-rose)">{{ overdueCount() }} overdue</span>
+        <span class="chip chip-warn" style="background:var(--tint-amber)">{{ reminders().length - overdueCount() }} upcoming</span>
       </div>
     }
 
@@ -47,7 +48,10 @@ import { PageHeader, StateBlock, StatusBadge } from '../../shared/ui';
 
     <div class="reminder-list">
       @for (r of reminders(); track r.id) {
-        <article class="card reminder" [class.reminder-overdue]="r.reminderType === 'OVERDUE'">
+        <article class="card reminder" [class.reminder-overdue]="r.reminderType === 'OVERDUE'"
+          [class.tone-rose]="r.status === 'OPEN' && r.reminderType === 'OVERDUE'"
+          [class.tone-amber]="r.status === 'OPEN' && r.reminderType !== 'OVERDUE'"
+          [class.tone-emerald]="r.status === 'COMPLETED'">
           <header class="reminder-head">
             <div class="row-actions">
               <app-badge [status]="r.reminderType" />
@@ -63,8 +67,8 @@ import { PageHeader, StateBlock, StatusBadge } from '../../shared/ui';
             @if (r.status === 'OPEN') {
               <span class="spacer"></span>
               <button type="button" class="btn btn-secondary btn-sm" (click)="openPreview(r)">Preview email</button>
-              <button type="button" class="btn btn-primary btn-sm" [disabled]="sendingId() === r.id" (click)="confirmSend(r)">{{ sendingId() === r.id ? 'Sending…' : 'Send email' }}</button>
-              <button type="button" class="btn btn-primary btn-sm" [disabled]="busyId() === r.id" (click)="update(r, 'COMPLETED')">Mark sent</button>
+              <button type="button" class="btn btn-primary btn-sm" style="background:var(--grad-violet);border-color:transparent;color:#fff" [disabled]="sendingId() === r.id" (click)="confirmSend(r)">{{ sendingId() === r.id ? 'Sending…' : 'Send email' }}</button>
+              <button type="button" class="btn btn-primary btn-sm" style="background:var(--grad-success);border-color:transparent;color:#fff" [disabled]="busyId() === r.id" (click)="update(r, 'COMPLETED')">Mark sent</button>
               <button type="button" class="btn btn-secondary btn-sm" [disabled]="busyId() === r.id" (click)="update(r, 'DISMISSED')">Dismiss</button>
             }
           </footer>

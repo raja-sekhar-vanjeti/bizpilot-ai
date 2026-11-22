@@ -18,9 +18,17 @@ import { RecordPayment } from './record-payment';
   selector: 'app-payments',
   imports: [RouterLink, DatePipe, MoneyPipe, LabelPipe, PageHeader, StateBlock, Pagination, Modal, RecordPayment],
   template: `
+    <div aria-hidden="true" style="height:4px;border-radius:4px;background:var(--grad-success);margin-bottom:14px"></div>
     <app-page-header title="Payments" subtitle="Money received against your invoices.">
-      <button type="button" class="btn btn-primary" (click)="openRecord()">+ Record payment</button>
+      <button type="button" class="btn btn-primary" style="background:var(--grad-success);border-color:transparent;color:#fff" (click)="openRecord()">+ Record payment</button>
     </app-page-header>
+
+    <div class="stats-grid">
+      <div class="stat-card tone-emerald" style="background:var(--tint-emerald)">
+        <span class="stat-label">Payments recorded</span>
+        <span class="stat-value">{{ result().totalElements }}</span>
+      </div>
+    </div>
 
     <div class="card">
       <app-state [loading]="loading()" [error]="error()" (retry)="load()"
@@ -41,7 +49,7 @@ import { RecordPayment } from './record-payment';
                     <a [routerLink]="['/invoices', p.invoiceId]">{{ invoiceById().get(p.invoiceId)?.invoiceNumber ?? 'View invoice' }}</a>
                   </td>
                   <td>{{ invoiceById().get(p.invoiceId)?.customerName ?? '—' }}</td>
-                  <td>{{ p.method | label }}</td>
+                  <td><span class="chip" style="background:var(--tint-indigo);color:#4338ca">{{ p.method | label }}</span></td>
                   <td>{{ p.reference || '—' }}</td>
                   <td class="num text-good">{{ p.amount | money: (invoiceById().get(p.invoiceId)?.currency ?? 'INR') }}</td>
                 </tr>

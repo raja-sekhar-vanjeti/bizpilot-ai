@@ -11,9 +11,11 @@ import { PageHeader, StateBlock, StatusBadge } from '../../shared/ui';
   selector: 'app-insights',
   imports: [DatePipe, MoneyPipe, PageHeader, StateBlock, StatusBadge],
   template: `
-    <app-page-header title="Financial insights" subtitle="Rule-based alerts from your invoices, payments, expenses and forecast.">
-      <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="load()">Refresh</button>
-    </app-page-header>
+    <div class="page-strip">
+      <app-page-header title="Financial insights" subtitle="Rule-based alerts from your invoices, payments, expenses and forecast.">
+        <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="load()">Refresh</button>
+      </app-page-header>
+    </div>
 
     @if (!loading() && !error() && insights().length > 0) {
       <div class="chip-row">
@@ -49,6 +51,45 @@ import { PageHeader, StateBlock, StatusBadge } from '../../shared/ui';
       }
     </div>
   `,
+  styles: [`
+    .page-strip {
+      background: var(--grad-violet);
+      color: #fff;
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .page-strip ::ng-deep .page-header { margin-bottom: 0; }
+    .page-strip ::ng-deep .page-header p { color: rgba(255, 255, 255, 0.9); }
+    .page-strip ::ng-deep .page-header h1 {
+      background: none;
+      color: #fff;
+      -webkit-text-fill-color: #fff;
+      -webkit-background-clip: border-box;
+      background-clip: border-box;
+    }
+    .page-strip ::ng-deep .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+    .insight.sev-critical {
+      --tone: #b8604f;
+      background: var(--tint-rose);
+      box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
+    }
+    .insight.sev-warning {
+      --tone: #c9965a;
+      background: var(--tint-amber);
+      box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
+    }
+    .insight.sev-info {
+      --tone: #3f6b57;
+      background: var(--tint-indigo);
+      box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
+    }
+  `],
 })
 export class InsightsPage implements OnInit {
   private readonly api = inject(InsightsService);

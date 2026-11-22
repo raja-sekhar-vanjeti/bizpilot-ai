@@ -58,7 +58,7 @@ import { fieldError } from '../../shared/form-errors';
           @if (error()) {
             <div class="alert alert-error" role="alert">{{ error() }}</div>
           }
-          <button type="submit" class="btn btn-primary btn-block" [disabled]="busy()">
+          <button type="submit" class="btn btn-primary btn-block grad-btn" [disabled]="busy()">
             {{ busy() ? 'Creating account…' : 'Create account' }}
           </button>
         </form>
@@ -66,6 +66,44 @@ import { fieldError } from '../../shared/form-errors';
       </section>
     </div>
   `,
+  styles: [`
+    .auth-hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--grad-primary);
+      color: #fff;
+      box-shadow: 0 18px 40px rgba(79, 70, 229, 0.28);
+    }
+    .auth-hero > * { position: relative; z-index: 1; }
+    .auth-hero h2, .auth-hero p, .auth-hero li { color: #fff; }
+    .auth-hero::before,
+    .auth-hero::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .auth-hero::before { width: 220px; height: 220px; top: -70px; right: -60px; }
+    .auth-hero::after { width: 120px; height: 120px; bottom: -40px; left: -30px; background: rgba(255, 255, 255, 0.1); }
+    @media (prefers-reduced-motion: no-preference) {
+      .auth-hero::before { animation: auth-float 9s ease-in-out infinite; }
+      .auth-hero::after { animation: auth-float 12s ease-in-out infinite reverse; }
+    }
+    @keyframes auth-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+    .btn.grad-btn {
+      background: var(--grad-primary);
+      border: none;
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(79, 70, 229, 0.32);
+    }
+    .btn.grad-btn:hover:not(:disabled) { filter: brightness(1.07); }
+    .btn.grad-btn:disabled { opacity: 0.7; }
+  `],
 })
 export class RegisterPage {
   private readonly fb = inject(NonNullableFormBuilder);

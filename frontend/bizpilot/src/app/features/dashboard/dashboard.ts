@@ -8,31 +8,38 @@ import { InsightsService } from '../../core/services/cashflow.service';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { BarChart, ChartGroup } from '../../shared/bar-chart';
 import { MoneyPipe } from '../../shared/money.pipe';
-import { PageHeader, StatCard, StateBlock, StatusBadge } from '../../shared/ui';
+import { StatCard, StateBlock, StatusBadge } from '../../shared/ui';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, DatePipe, MoneyPipe, PageHeader, StatCard, StateBlock, StatusBadge, BarChart],
+  imports: [RouterLink, DatePipe, MoneyPipe, StatCard, StateBlock, StatusBadge, BarChart],
   template: `
-    <app-page-header [title]="greeting()" subtitle="Here is how your business is doing.">
-      <a routerLink="/invoices/new" class="btn btn-primary">+ New invoice</a>
-      <a routerLink="/expenses" class="btn btn-secondary">+ Expense</a>
-    </app-page-header>
+    <div class="welcome-banner">
+      <p class="eyebrow">Overview</p>
+      <h1 class="hero-title">
+        <span class="hero-line-1">{{ greeting() }}</span>
+        <span class="hero-line-2 title-accent">Here is how your business is doing.</span>
+      </h1>
+      <div class="hero-actions">
+        <a routerLink="/invoices/new" class="btn btn-primary">+ New invoice</a>
+        <a routerLink="/expenses" class="btn btn-secondary">+ Expense</a>
+      </div>
+    </div>
 
     <app-state [loading]="loadingSummary()" [error]="summaryError()" (retry)="loadSummary()" />
     @if (summary(); as s) {
       <div class="grid stats-grid">
-        <app-stat-card label="Total collected" [value]="s.totalCollected | money" hint="Payments received" tone="good" />
-        <app-stat-card label="Total expenses" [value]="s.totalExpenses | money" hint="All recorded expenses" tone="bad" />
-        <app-stat-card label="Net cash movement" [value]="s.netCashMovement | money" hint="Collected minus expenses"
+        <app-stat-card class="tone-emerald stat-tone" label="Total collected" [value]="s.totalCollected | money" hint="Payments received" tone="good" />
+        <app-stat-card class="tone-rose stat-tone" label="Total expenses" [value]="s.totalExpenses | money" hint="All recorded expenses" tone="bad" />
+        <app-stat-card class="tone-indigo stat-tone" label="Net cash movement" [value]="s.netCashMovement | money" hint="Collected minus expenses"
           [tone]="s.netCashMovement >= 0 ? 'good' : 'bad'" />
-        <app-stat-card label="Outstanding receivables" [value]="s.outstandingReceivables | money"
+        <app-stat-card class="tone-amber stat-tone" label="Outstanding receivables" [value]="s.outstandingReceivables | money"
           [hint]="s.pendingInvoiceCount + ' pending invoice(s)'" tone="info" />
-        <app-stat-card label="Overdue receivables" [value]="s.overdueReceivables | money"
+        <app-stat-card class="tone-violet stat-tone" label="Overdue receivables" [value]="s.overdueReceivables | money"
           [hint]="s.overdueInvoiceCount + ' overdue invoice(s)'" [tone]="s.overdueInvoiceCount > 0 ? 'warn' : 'default'" />
-        <app-stat-card label="Total invoiced" [value]="s.totalInvoiced | money"
+        <app-stat-card class="tone-indigo stat-tone" label="Total invoiced" [value]="s.totalInvoiced | money"
           [hint]="s.invoiceCount + ' invoices · ' + s.paidInvoiceCount + ' paid'" />
-        <app-stat-card label="Active customers" [value]="'' + s.customerCount" hint="Not archived" />
+        <app-stat-card class="tone-violet stat-tone" label="Active customers" [value]="'' + s.customerCount" hint="Not archived" />
       </div>
     }
 
@@ -98,6 +105,25 @@ import { PageHeader, StatCard, StateBlock, StatusBadge } from '../../shared/ui';
       }
     </section>
   `,
+  styles: [`
+    .welcome-banner {
+      position: relative; margin-bottom: 24px; padding: 32px 36px; border-radius: 28px;
+      background: rgba(255, 255, 255, .55); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, .8); box-shadow: 0 24px 48px -28px rgba(40, 40, 40, .25);
+      color: #2b2f2c;
+    }
+    .eyebrow { margin: 0 0 10px; font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: #7a817c; }
+    .hero-title { margin: 0; font-size: clamp(30px, 4vw, 46px); line-height: 1.08; font-weight: 800; letter-spacing: -.02em; }
+    .hero-line-1 { display: block; color: #2b2f2c; }
+    .hero-line-2 { display: block; color: var(--sage-deep, #6f9a84); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .stat-tone { display: block; border-radius: 22px; background: var(--tint-neutral, #f1f3ef); }
+    .stat-tone.tone-emerald { background: var(--tint-emerald, #e4f3ea); }
+    .stat-tone.tone-rose { background: var(--tint-rose, #f9e6e6); }
+    .stat-tone.tone-indigo { background: var(--tint-indigo, #e6e9f7); }
+    .stat-tone.tone-amber { background: var(--tint-amber, #fbf1de); }
+    .stat-tone.tone-violet { background: var(--tint-violet, #efe7f7); }
+  `],
 })
 export class DashboardPage implements OnInit {
   private readonly dashboard = inject(DashboardService);

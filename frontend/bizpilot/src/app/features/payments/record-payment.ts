@@ -14,6 +14,10 @@ import { LabelPipe, MoneyPipe } from '../../shared/money.pipe';
   selector: 'app-record-payment',
   imports: [ReactiveFormsModule, MoneyPipe, LabelPipe],
   template: `
+    <div style="background:var(--grad-success);color:#fff;border-radius:8px;padding:10px 14px;margin-bottom:14px">
+      <strong>Record a payment</strong>
+      <div style="font-size:12px;opacity:.9">Apply money received against an open invoice.</div>
+    </div>
     <form [formGroup]="form" (ngSubmit)="save()" novalidate>
       @if (!fixedInvoice()) {
         <div class="field">
@@ -36,7 +40,7 @@ import { LabelPipe, MoneyPipe } from '../../shared/money.pipe';
           <span>Outstanding <strong>{{ inv.outstandingAmount | money: inv.currency }}</strong></span>
         </div>
       }
-      <div class="form-grid">
+      <div class="form-grid tone-emerald" style="padding:12px;border-radius:8px;background:var(--tint-emerald)">
         <div class="field">
           <label for="p-amount">Amount</label>
           <input id="p-amount" class="input" type="number" step="0.01" min="0.01" formControlName="amount" />
@@ -71,7 +75,7 @@ import { LabelPipe, MoneyPipe } from '../../shared/money.pipe';
       @if (error()) { <div class="alert alert-error" role="alert">{{ error() }}</div> }
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="cancelled.emit()">Cancel</button>
-        <button type="submit" class="btn btn-primary" [disabled]="saving()">{{ saving() ? 'Recording…' : 'Record payment' }}</button>
+        <button type="submit" class="btn btn-primary" style="background:var(--grad-success);border-color:transparent;color:#fff" [disabled]="saving()">{{ saving() ? 'Recording…' : 'Record payment' }}</button>
       </div>
     </form>
   `,

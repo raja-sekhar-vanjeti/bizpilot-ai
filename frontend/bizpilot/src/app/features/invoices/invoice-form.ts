@@ -20,10 +20,12 @@ function round2(value: number): number {
   selector: 'app-invoice-form',
   imports: [ReactiveFormsModule, RouterLink, MoneyPipe, PageHeader, StateBlock],
   template: `
-    <app-page-header [title]="id() ? 'Edit invoice' : 'New invoice'"
-      [subtitle]="id() ? 'Only draft invoices can be edited.' : 'Invoices start as drafts. Send them when ready.'">
-      <a [routerLink]="id() ? ['/invoices', id()] : ['/invoices']" class="btn btn-secondary">Back</a>
-    </app-page-header>
+    <div class="hero-strip">
+      <app-page-header [title]="id() ? 'Edit invoice' : 'New invoice'"
+        [subtitle]="id() ? 'Only draft invoices can be edited.' : 'Invoices start as drafts. Send them when ready.'">
+        <a [routerLink]="id() ? ['/invoices', id()] : ['/invoices']" class="btn btn-secondary">Back</a>
+      </app-page-header>
+    </div>
 
     <app-state [loading]="loading()" [error]="loadError()" (retry)="load()" />
 
@@ -32,7 +34,7 @@ function round2(value: number): number {
         <div class="alert alert-warn">This invoice is {{ locked() }} and can no longer be edited.</div>
       } @else {
         <form [formGroup]="form" (ngSubmit)="save(false)" novalidate class="invoice-form">
-          <section class="card">
+          <section class="card tone-indigo accent-indigo">
             <h2>Details</h2>
             <div class="form-grid three">
               <div class="field span-2">
@@ -71,7 +73,7 @@ function round2(value: number): number {
             </div>
           </section>
 
-          <section class="card">
+          <section class="card tone-violet accent-violet">
             <div class="card-head">
               <h2>Line items</h2>
               <button type="button" class="btn btn-secondary btn-sm" (click)="addItem()">+ Add item</button>
@@ -102,12 +104,12 @@ function round2(value: number): number {
           </section>
 
           <div class="grid two-col">
-            <section class="card">
+            <section class="card tone-amber accent-amber">
               <h2>Notes</h2>
               <textarea class="textarea" rows="4" formControlName="notes" placeholder="Payment terms, bank details…" aria-label="Notes"></textarea>
               @if (err(form.controls.notes, 'Notes'); as e) { <span class="form-error">{{ e }}</span> }
             </section>
-            <section class="card totals">
+            <section class="card totals totals-grad">
               <h2>Summary</h2>
               <div class="total-row"><span>Subtotal</span><span>{{ totals().subtotal | money: currency() }}</span></div>
               <div class="total-row">
@@ -127,12 +129,25 @@ function round2(value: number): number {
           <div class="form-actions">
             <a [routerLink]="id() ? ['/invoices', id()] : ['/invoices']" class="btn btn-secondary">Cancel</a>
             <button type="submit" class="btn btn-secondary" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save draft' }}</button>
-            <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="save(true)">Save &amp; send</button>
+            <button type="button" class="btn btn-primary btn-grad" [disabled]="saving()" (click)="save(true)">Save &amp; send</button>
           </div>
         </form>
       }
     }
   `,
+  styles: [`
+    .hero-strip { background: var(--grad-primary); color: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25); }
+    .btn-grad { background: var(--grad-primary); color: #fff; border: 0; }
+    .btn-grad:hover:not(:disabled) { filter: brightness(1.08); }
+    .accent-indigo { border-top: 3px solid #3f6b57; }
+    .accent-violet { border-top: 3px solid #7fa08a; }
+    .accent-amber { border-top: 3px solid #c9965a; }
+    .totals-grad { background: var(--grad-success); color: #fff; border: 0; box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3); }
+    .totals-grad h2, .totals-grad .total-row, .totals-grad .total-row label { color: #fff; -webkit-text-fill-color: #fff; background: none; }
+    .totals-grad .total-row.grand { border-top-color: rgba(255, 255, 255, 0.6); font-weight: 700; }
+    .totals-grad .muted { color: rgba(255, 255, 255, 0.85); }
+    .totals-grad .form-error { color: #fff; font-weight: 600; }
+  `],
 })
 export class InvoiceFormPage implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);

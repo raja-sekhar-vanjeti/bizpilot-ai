@@ -30,6 +30,16 @@ export function errorMessage(error: unknown, fallback = 'Something went wrong. P
     if (error.status === 0) {
       return 'Cannot reach the BizPilot server. Check that the backend is running.';
     }
+    // A 2xx response that failed JSON parsing means /api returned a web page (usually index.html):
+    // the dev-server proxy is not active or the API URL points at the frontend host.
+    const raw = error.error as { error?: unknown; text?: string } | SyntaxError | null;
+    const htmlInsteadOfJson =
+      (error.status >= 200 && error.status < 300) ||
+      raw instanceof SyntaxError ||
+      (!!raw && typeof raw === 'object' && 'text' in raw && typeof raw.text === 'string' && raw.text.trimStart().startsWith('<'));
+    if (htmlInsteadOfJson) {
+      return 'The API returned a web page instead of data. Make sure the backend is running, then restart the frontend (npm start) so the /api proxy is active.';
+    }
     const body = error.error as { message?: string } | null;
     if (body && typeof body === 'object' && body.message) {
       return body.message;

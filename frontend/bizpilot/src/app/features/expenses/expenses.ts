@@ -13,8 +13,9 @@ import { Modal, PageHeader, Pagination, StateBlock } from '../../shared/ui';
   selector: 'app-expenses',
   imports: [ReactiveFormsModule, FormsModule, DatePipe, MoneyPipe, LabelPipe, PageHeader, StateBlock, Pagination, Modal],
   template: `
+    <div aria-hidden="true" style="height:4px;border-radius:4px;background:var(--grad-warm);margin-bottom:14px"></div>
     <app-page-header title="Expenses" subtitle="Track what your business spends.">
-      <button type="button" class="btn btn-primary" (click)="openCreate()">+ Add expense</button>
+      <button type="button" class="btn btn-primary" style="background:var(--grad-warm);border-color:transparent;color:#fff" (click)="openCreate()">+ Add expense</button>
     </app-page-header>
 
     <div class="card">
@@ -50,14 +51,14 @@ import { Modal, PageHeader, Pagination, StateBlock } from '../../shared/ui';
         <div class="table-wrap">
           <table class="table">
             <thead>
-              <tr><th>Date</th><th>Description</th><th>Category</th><th>Vendor</th><th>Method</th><th class="num">Amount</th><th class="actions-col">Actions</th></tr>
+              <tr style="background:var(--tint-rose)"><th>Date</th><th>Description</th><th>Category</th><th>Vendor</th><th>Method</th><th class="num">Amount</th><th class="actions-col">Actions</th></tr>
             </thead>
             <tbody>
               @for (e of result().items; track e.id) {
                 <tr>
                   <td>{{ e.expenseDate | date: 'mediumDate' }}</td>
                   <td><strong>{{ e.description }}</strong>@if (e.notes) {<br /><span class="muted small">{{ e.notes }}</span>}</td>
-                  <td><span class="chip">{{ e.category | label }}</span></td>
+                  <td><span class="chip" style="background:var(--tint-rose);color:#be123c">{{ e.category | label }}</span></td>
                   <td>{{ e.vendor || '—' }}</td>
                   <td>{{ e.paymentMethod | label }}</td>
                   <td class="num text-bad">{{ e.amount | money }}</td>
@@ -120,7 +121,7 @@ import { Modal, PageHeader, Pagination, StateBlock } from '../../shared/ui';
         @if (formError()) { <div class="alert alert-error" role="alert">{{ formError() }}</div> }
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="formOpen.set(false)">Cancel</button>
-          <button type="submit" class="btn btn-primary" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save expense' }}</button>
+          <button type="submit" class="btn btn-primary" style="background:var(--grad-warm);border-color:transparent;color:#fff" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save expense' }}</button>
         </div>
       </form>
     </app-modal>

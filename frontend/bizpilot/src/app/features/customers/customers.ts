@@ -15,7 +15,7 @@ import { Modal, PageHeader, Pagination, StateBlock } from '../../shared/ui';
   imports: [ReactiveFormsModule, RouterLink, PageHeader, StateBlock, Pagination, Modal],
   template: `
     <app-page-header title="Customers" subtitle="People and companies you invoice.">
-      <button type="button" class="btn btn-primary" (click)="openCreate()">+ Add customer</button>
+      <button type="button" class="btn btn-primary btn-grad" (click)="openCreate()">+ Add customer</button>
     </app-page-header>
 
     <div class="card">
@@ -28,6 +28,10 @@ import { Modal, PageHeader, Pagination, StateBlock } from '../../shared/ui';
         [emptyText]="search.value ? 'No customers match your search.' : 'No customers yet. Add your first customer to start invoicing.'" />
 
       @if (!loading() && result().items.length > 0) {
+        <div class="grad-strip">
+          <span>{{ result().totalElements }} customers</span>
+          <span>Page {{ result().page + 1 }} of {{ result().totalPages }}</span>
+        </div>
         <div class="table-wrap">
           <table class="table">
             <thead>
@@ -106,6 +110,12 @@ import { Modal, PageHeader, Pagination, StateBlock } from '../../shared/ui';
       </div>
     </app-modal>
   `,
+  styles: [`
+    .grad-strip { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: var(--grad-primary); color: #fff; border-radius: 10px; padding: 12px 16px; margin-bottom: 12px; font-weight: 600; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25); }
+    .btn-grad { background: var(--grad-primary); color: #fff; border: 0; }
+    .btn-grad:hover:not(:disabled) { filter: brightness(1.08); }
+    thead th { background: var(--tint-indigo); }
+  `],
 })
 export class CustomersPage implements OnInit {
   private readonly api = inject(CustomerService);

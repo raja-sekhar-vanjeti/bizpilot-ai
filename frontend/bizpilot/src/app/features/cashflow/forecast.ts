@@ -12,9 +12,11 @@ import { PageHeader, StatCard, StateBlock } from '../../shared/ui';
   selector: 'app-forecast',
   imports: [RouterLink, DatePipe, MoneyPipe, PageHeader, StatCard, StateBlock, BarChart],
   template: `
-    <app-page-header title="Cash-flow forecast" subtitle="Projected cash position from confirmed payments, unpaid invoices and expected spending.">
-      <a routerLink="/what-if" class="btn btn-secondary">Run what-if</a>
-    </app-page-header>
+    <div class="page-strip">
+      <app-page-header title="Cash-flow forecast" subtitle="Projected cash position from confirmed payments, unpaid invoices and expected spending.">
+        <a routerLink="/what-if" class="btn btn-secondary">Run what-if</a>
+      </app-page-header>
+    </div>
 
     <div class="toolbar card toolbar-card">
       <div class="segmented" role="group" aria-label="Forecast horizon">
@@ -35,16 +37,16 @@ import { PageHeader, StatCard, StateBlock } from '../../shared/ui';
         As of {{ f.asOfDate | date: 'mediumDate' }} · forecasting {{ f.startDate | date: 'mediumDate' }} – {{ f.endDate | date: 'mediumDate' }}
       </p>
       <div class="grid stats-grid">
-        <app-stat-card label="Opening balance" [value]="f.openingBalance | money"
+        <app-stat-card class="kpi-balance" label="Opening balance" [value]="f.openingBalance | money"
           [hint]="'Received ' + (f.confirmedCashIn | money) + ' − spent ' + (f.confirmedCashOut | money)" />
-        <app-stat-card label="Projected closing balance" [value]="f.projectedClosingBalance | money"
+        <app-stat-card class="kpi-balance" label="Projected closing balance" [value]="f.projectedClosingBalance | money"
           [tone]="f.projectedClosingBalance >= 0 ? 'good' : 'bad'" [hint]="'On ' + (f.endDate | date: 'mediumDate')" />
         <app-stat-card label="Lowest projected balance" [value]="f.lowestProjectedBalance | money"
           [tone]="f.lowestProjectedBalance < 0 ? 'bad' : 'warn'" [hint]="f.lowestBalanceDate ? 'On ' + (f.lowestBalanceDate | date: 'mediumDate') : ''" />
         <app-stat-card label="Expected from invoices" [value]="f.totalExpectedInflow | money" tone="info"
           [hint]="'Unpaid — not confirmed cash'" />
-        <app-stat-card label="Confirmed inflows" [value]="f.totalConfirmedInflow | money" tone="good" hint="Payments already recorded" />
-        <app-stat-card label="Outflows" [value]="(f.totalScheduledOutflow + f.totalProjectedOutflow) | money" tone="bad"
+        <app-stat-card class="kpi-in" label="Confirmed inflows" [value]="f.totalConfirmedInflow | money" tone="good" hint="Payments already recorded" />
+        <app-stat-card class="kpi-out" label="Outflows" [value]="(f.totalScheduledOutflow + f.totalProjectedOutflow) | money" tone="bad"
           [hint]="'Scheduled ' + (f.totalScheduledOutflow | money) + ' + est. ' + (f.averageDailyExpense | money) + '/day'" />
       </div>
 
@@ -55,12 +57,12 @@ import { PageHeader, StatCard, StateBlock } from '../../shared/ui';
         </div>
       }
 
-      <section class="card">
+      <section class="card chart-card">
         <div class="card-head"><h2>Projected closing balance</h2><span class="muted small">per {{ f.granularity === 'DAILY' ? 'day' : 'week' }}</span></div>
         <app-bar-chart [groups]="balanceGroups()" [series]="balanceSeries" ariaLabel="Projected closing balance" />
       </section>
 
-      <section class="card">
+      <section class="card chart-card">
         <div class="card-head"><h2>Inflows vs outflows</h2></div>
         <app-bar-chart [groups]="flowGroups()" [series]="flowSeries" ariaLabel="Forecast inflows and outflows" />
       </section>
@@ -133,6 +135,56 @@ import { PageHeader, StatCard, StateBlock } from '../../shared/ui';
       </section>
     }
   `,
+  styles: [`
+    .page-strip {
+      background: var(--grad-primary);
+      color: #fff;
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .page-strip ::ng-deep .page-header { margin-bottom: 0; }
+    .page-strip ::ng-deep .page-header p { color: rgba(255, 255, 255, 0.9); }
+    .page-strip ::ng-deep .page-header h1 {
+      background: none;
+      color: #fff;
+      -webkit-text-fill-color: #fff;
+      -webkit-background-clip: border-box;
+      background-clip: border-box;
+    }
+    .page-strip ::ng-deep .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+    .kpi-balance ::ng-deep .stat-card {
+      --tone: #3f6b57;
+      background: var(--tint-indigo);
+      box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
+    }
+    .kpi-in ::ng-deep .stat-card {
+      --tone: #5f8f74;
+      background: var(--tint-emerald);
+      box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
+    }
+    .kpi-out ::ng-deep .stat-card {
+      --tone: #b8604f;
+      background: var(--tint-rose);
+      box-shadow: inset 0 3px 0 var(--tone), var(--shadow);
+    }
+    .chart-card { position: relative; }
+    .chart-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      border-radius: 14px 14px 0 0;
+      background: var(--grad-primary);
+    }
+  `],
 })
 export class ForecastPage implements OnInit {
   private readonly api = inject(CashflowService);
@@ -144,7 +196,7 @@ export class ForecastPage implements OnInit {
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
 
-  protected readonly balanceSeries = [{ name: 'Closing balance', color: '#2563eb' }];
+  protected readonly balanceSeries = [{ name: 'Closing balance', color: '#2f5a48' }];
   protected readonly flowSeries = [
     { name: 'Confirmed in', color: '#16a34a' },
     { name: 'Expected in', color: '#86efac' },

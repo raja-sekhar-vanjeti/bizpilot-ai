@@ -16,20 +16,22 @@ import { RecordPayment } from '../payments/record-payment';
     <app-state [loading]="loading()" [error]="error()" (retry)="load()" />
 
     @if (invoice(); as inv) {
-      <app-page-header [title]="'Invoice ' + inv.invoiceNumber" [subtitle]="inv.customerName">
-        <a routerLink="/invoices" class="btn btn-secondary">All invoices</a>
-        @if (inv.status === 'DRAFT') {
-          <a [routerLink]="['/invoices', inv.id, 'edit']" class="btn btn-secondary">Edit</a>
-          <button type="button" class="btn btn-primary" [disabled]="busy()" (click)="send()">Send invoice</button>
-        }
-        @if (canPay()) {
-          <button type="button" class="btn btn-primary" (click)="payOpen.set(true)">Record payment</button>
-        }
-        @if (canCancel()) {
-          <button type="button" class="btn btn-ghost-danger" (click)="confirmCancel.set(true)">Cancel invoice</button>
-        }
-        <button type="button" class="btn btn-secondary" (click)="print()">Print</button>
-      </app-page-header>
+      <div class="hero-strip">
+        <app-page-header [title]="'Invoice ' + inv.invoiceNumber" [subtitle]="inv.customerName">
+          <a routerLink="/invoices" class="btn btn-secondary">All invoices</a>
+          @if (inv.status === 'DRAFT') {
+            <a [routerLink]="['/invoices', inv.id, 'edit']" class="btn btn-secondary">Edit</a>
+            <button type="button" class="btn btn-primary btn-grad" [disabled]="busy()" (click)="send()">Send invoice</button>
+          }
+          @if (canPay()) {
+            <button type="button" class="btn btn-primary btn-grad" (click)="payOpen.set(true)">Record payment</button>
+          }
+          @if (canCancel()) {
+            <button type="button" class="btn btn-ghost-danger" (click)="confirmCancel.set(true)">Cancel invoice</button>
+          }
+          <button type="button" class="btn btn-secondary" (click)="print()">Print</button>
+        </app-page-header>
+      </div>
 
       <div class="grid stats-grid">
         <div class="card stat-card"><span class="stat-label">Status</span><span><app-badge [status]="inv.status" /></span>
@@ -43,7 +45,7 @@ import { RecordPayment } from '../payments/record-payment';
         </div>
       </div>
 
-      <section class="card printable">
+      <section class="card printable tone-indigo accent-indigo">
         <div class="invoice-head">
           <div>
             <h2>{{ inv.invoiceNumber }}</h2>
@@ -70,7 +72,7 @@ import { RecordPayment } from '../payments/record-payment';
             </tbody>
           </table>
         </div>
-        <div class="totals totals-inline">
+        <div class="totals totals-inline totals-grad">
           <div class="total-row"><span>Subtotal</span><span>{{ inv.subtotal | money: inv.currency }}</span></div>
           @if (inv.discountAmount > 0) {
             <div class="total-row"><span>Discount</span><span>−{{ inv.discountAmount | money: inv.currency }}</span></div>
@@ -81,7 +83,7 @@ import { RecordPayment } from '../payments/record-payment';
         @if (inv.notes) { <p class="notes"><strong>Notes:</strong> {{ inv.notes }}</p> }
       </section>
 
-      <section class="card">
+      <section class="card tone-emerald accent-emerald">
         <div class="card-head"><h2>Payments</h2></div>
         <app-state [loading]="loadingPayments()" [empty]="!loadingPayments() && payments().length === 0"
           emptyText="No payments recorded for this invoice." />
@@ -120,6 +122,17 @@ import { RecordPayment } from '../payments/record-payment';
       </app-modal>
     }
   `,
+  styles: [`
+    .hero-strip { background: var(--grad-primary); color: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25); }
+    .btn-grad { background: var(--grad-primary); color: #fff; border: 0; }
+    .btn-grad:hover:not(:disabled) { filter: brightness(1.08); }
+    .accent-indigo { border-top: 3px solid #3f6b57; }
+    .accent-emerald { border-top: 3px solid #5f8f74; }
+    thead th { background: var(--tint-indigo); }
+    .totals-grad { background: var(--grad-success); color: #fff; border-radius: 10px; padding: 12px 16px; box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3); }
+    .totals-grad .total-row { color: #fff; }
+    .totals-grad .total-row.grand { border-top-color: rgba(255, 255, 255, 0.6); font-weight: 700; }
+  `],
 })
 export class InvoiceDetailPage implements OnInit {
   private readonly api = inject(InvoiceService);

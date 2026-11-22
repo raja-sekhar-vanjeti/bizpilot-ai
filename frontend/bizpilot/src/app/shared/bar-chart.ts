@@ -30,8 +30,8 @@ export interface ChartGroup {
             <text [attr.x]="l.left - 6" [attr.y]="t.y + 4" text-anchor="end" class="chart-axis">{{ t.text }}</text>
           }
           <line [attr.x1]="l.left" [attr.x2]="l.width" [attr.y1]="l.zeroY" [attr.y2]="l.zeroY" class="chart-zero" />
-          @for (b of l.bars; track $index) {
-            <rect [attr.x]="b.x" [attr.y]="b.y" [attr.width]="b.w" [attr.height]="b.h" [attr.fill]="b.color" rx="2">
+          @for (b of l.bars; track $index; let i = $index) {
+            <rect [attr.x]="b.x" [attr.y]="b.y" [attr.width]="b.w" [attr.height]="b.h" [style.fill]="b.color" [style.animation-delay]="i * 30 + 'ms'" class="chart-bar" rx="4">
               <title>{{ b.title }}</title>
             </rect>
           }
@@ -42,6 +42,19 @@ export interface ChartGroup {
       }
     </div>
   `,
+  styles: [`
+    @keyframes bp-bar-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    .chart-bar {
+      transform-box: fill-box; transform-origin: center;
+      animation: bp-bar-grow .6s cubic-bezier(.2, .8, .2, 1) both;
+    }
+    .chart-grid { stroke: var(--border, #e2e8f0); stroke-width: 1; }
+    .chart-zero { stroke: var(--muted, #94a3b8); stroke-width: 1; }
+    .chart-axis { fill: var(--muted, #64748b); font-size: 11px; }
+    @media (prefers-reduced-motion: reduce) {
+      .chart-bar { animation: none; }
+    }
+  `],
 })
 export class BarChart {
   readonly groups = input.required<ChartGroup[]>();
@@ -83,7 +96,7 @@ export class BarChart {
           y: v >= 0 ? y : zeroY,
           w: Math.max(barW - 2, 1),
           h: Math.max(h, v === 0 ? 0 : 1),
-          color: series[si]?.color ?? '#94a3b8',
+          color: series[si]?.color ?? 'var(--muted, #94a3b8)',
           title: `${g.label} · ${series[si]?.name ?? ''}: ${v.toLocaleString('en-IN')}`,
         };
       }),

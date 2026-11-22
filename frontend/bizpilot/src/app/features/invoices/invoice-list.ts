@@ -11,6 +11,18 @@ import { PageHeader, Pagination, StateBlock, StatusBadge } from '../../shared/ui
 
 type FilterMode = 'all' | 'status' | 'customer' | 'dates';
 
+/** Maps an invoice state to a tint tone for the status chip. */
+function statusTone(status: InvoiceStatus): string {
+  switch (status) {
+    case 'PAID': return 'emerald';
+    case 'OVERDUE': return 'rose';
+    case 'SENT':
+    case 'PARTIALLY_PAID': return 'amber';
+    case 'DRAFT': return 'violet';
+    default: return 'muted';
+  }
+}
+
 /**
  * Invoice list. The backend applies one filter per request (status, customer or invoice-date
  * range), so the UI offers one filter at a time instead of pretending to combine them.
@@ -19,9 +31,11 @@ type FilterMode = 'all' | 'status' | 'customer' | 'dates';
   selector: 'app-invoice-list',
   imports: [FormsModule, RouterLink, DatePipe, MoneyPipe, LabelPipe, PageHeader, StateBlock, Pagination, StatusBadge],
   template: `
-    <app-page-header title="Invoices" subtitle="Create, send and track invoices.">
-      <a routerLink="/invoices/new" class="btn btn-primary">+ New invoice</a>
-    </app-page-header>
+    <div class="hero-strip">
+      <app-page-header title="Invoices" subtitle="Create, send and track invoices.">
+        <a routerLink="/invoices/new" class="btn btn-primary btn-grad">+ New invoice</a>
+      </app-page-header>
+    </div>
 
     <div class="card">
       <div class="toolbar">
@@ -68,7 +82,7 @@ type FilterMode = 'all' | 'status' | 'customer' | 'dates';
       <app-state [loading]="loading()" [error]="error()" (retry)="load()"
         [empty]="!loading() && !error() && result().items.length === 0"
         [emptyText]="mode() === 'all' ? 'No invoices yet. Create your first invoice.' : 'No invoices match this filter.'">
-        @if (mode() === 'all') { <a routerLink="/invoices/new" class="btn btn-primary btn-sm">Create invoice</a> }
+        @if (mode() === 'all') { <a routerLink="/invoices/new" class="btn btn-primary btn-grad btn-sm">Create invoice</a> }
       </app-state>
 
       @if (!loading() && result().items.length > 0) {
@@ -89,7 +103,7 @@ type FilterMode = 'all' | 'status' | 'customer' | 'dates';
                   <td>{{ inv.dueDate | date: 'mediumDate' }}</td>
                   <td class="num">{{ inv.totalAmount | money: inv.currency }}</td>
                   <td class="num">{{ inv.outstandingAmount | money: inv.currency }}</td>
-                  <td><app-badge [status]="inv.status" /></td>
+                  <td><span class="st-chip" [attr.data-tone]="tone(inv.status)"><app-badge [status]="inv.status" /></span></td>
                 </tr>
               }
             </tbody>
@@ -99,11 +113,24 @@ type FilterMode = 'all' | 'status' | 'customer' | 'dates';
       }
     </div>
   `,
+  styles: [`
+    .hero-strip { background: var(--grad-primary); color: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25); }
+    .btn-grad { background: var(--grad-primary); color: #fff; border: 0; }
+    .btn-grad:hover:not(:disabled) { filter: brightness(1.08); }
+    thead th { background: var(--tint-indigo); }
+    .st-chip { display: inline-block; border-radius: 999px; padding: 2px 4px; }
+    .st-chip[data-tone="emerald"] { background: var(--tint-emerald); }
+    .st-chip[data-tone="rose"] { background: var(--tint-rose); }
+    .st-chip[data-tone="amber"] { background: var(--tint-amber); }
+    .st-chip[data-tone="violet"] { background: var(--tint-violet); }
+  `],
 })
 export class InvoiceListPage implements OnInit {
   private readonly api = inject(InvoiceService);
   private readonly customerApi = inject(CustomerService);
   private readonly router = inject(Router);
+
+  protected readonly tone = statusTone;
 
   /** Optional ?customerId= from the customers page. */
   readonly customerId = input<string>('');
